@@ -151,10 +151,9 @@ def write_out_kurucz_fortran_format(lower_levels,upper_levels,jvalues,wavelength
         print("printing ",num_trans_to_be_printed," lines")
     print("-------------------------")
 
-    
     rejected_transitions_wavelength = 0
     rejected_transitions_a_value = 0
-
+    suspect_transitions_a_value = 0
     for iter in range(0,num_trans_to_be_printed):
         current_wavelength = wavelengths[iter]
         current_a_value = avalues[iter]
@@ -168,6 +167,10 @@ def write_out_kurucz_fortran_format(lower_levels,upper_levels,jvalues,wavelength
         elif ((current_a_value < 1e-29) and (reject_bad_a_values == True)):
             rejected_transitions_a_value += 1
         else:
+            #but not rejected ... logic could probably be better structured
+            if current_a_value < 1e-29:
+                suspect_transitions_a_value+=1
+
             array = [current_wavelength,loggf[iter],elementcode] 
             lower_level_info = [wavenumbers[lower_index],jvalues[lower_index],labels[lower_index]]
             upper_level_info = [wavenumbers[upper_index],jvalues[upper_index],labels[upper_index]]
@@ -194,9 +197,11 @@ def write_out_kurucz_fortran_format(lower_levels,upper_levels,jvalues,wavelength
     print("output summary: ")
     print(num_trans_to_be_printed, 'lines requested')
     print(rejected_transitions," lines rejected")
-    print('       ',rejected_transitions_wavelength,'bad wavelengths')
-    print('       ',rejected_transitions_a_value,'bad A values')
-
+    print('       ',rejected_transitions_wavelength,'bad wavelengths rejected')
+    if reject_bad_a_values == True:
+        print('       ',rejected_transitions_a_value,'bad A values rejected')
+    else:
+        print('       ',suspect_transitions_a_value,'bad A values found (not rejected as per user instruction)')
     print(num_trans_to_be_printed-rejected_transitions, "lines printed")
     print("output data is in ",file_name_string)
     print("-------------------------")

@@ -11,7 +11,7 @@ the head of the adf04 file is ideally something like "Y +1        39         2  
 The absolute number of spaces between stuff doesn't matter (i dont think) as long as there is at least one space
 
 the additional optional arguments:
-     -r '0 or 1' tells the code to either accept or reject bad A values from the adf04 file (i.e the default value of 1e-30). 0 is on by default.
+     -r (no argument, just a flag) tells the code to either accept or reject bad A values from the adf04 file (i.e the default value of 1e-30). 0 is on by default.
      -n 'n' specifies number of lines wanted, by default it prints all (except those rejected on wavelength or a value grounds if specified.)
 
 current dependencies: 
