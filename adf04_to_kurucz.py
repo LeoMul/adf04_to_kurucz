@@ -1,8 +1,8 @@
 import atomic_calc
 import parsing_adf04
 import output
+
 import argparse
-import sys
 
 MAX_LINES = (2**63-1)
 

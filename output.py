@@ -126,11 +126,10 @@ def write_out_kurucz_format(lower_levels,upper_levels,jvalues,wavelengths,avalue
 def write_out_kurucz_fortran_format(lower_levels,upper_levels,jvalues,wavelengths,avalues,loggf,wavenumbers,elementcode,csfs,level_truncate,reject_bad_a_values):
     num_trans = len(wavelengths)
 
-    file_name_string = 'test_Kurucz_formatted_adf04_element' + str(elementcode)
+    file_name_string = 'Kurucz_formatted_adf04_element' + str(elementcode)
 
     f = open(file_name_string,'w')
     labels = make_level_labels(csf_strings=csfs)
-    file =  open('test.csv', 'w', newline='')
 
     print("Writing out to ",file_name_string)
     format_string = 'F11.4,F7.3,F6.2,F12.3,F5.1,1X,A10,F12.3,F5.1,1X,A10,F6.2,F6.2,F6.2,A4,I2,I2,I3,F6.3,I3,F6.3,I5,I5,A10,I5,I5'
