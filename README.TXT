@@ -7,7 +7,8 @@ and retains (most of) the level labels in the adf04 file.
 
 since CARSUS expects the wavelengths in fortran F11.4 format, it automatically rejects any wavelength that cannot be stored in this format.
 
-
+the head of the adf04 file is ideally something like "Y +1        39         2         98590.(2F)" 
+The absolute number of spaces between stuff doesn't matter (i dont think) as long as there is at least one space
 
 the additional optional arguments:
      -r '0 or 1' tells the code to either accept or reject bad A values from the adf04 file (i.e the default value of 1e-30). 0 is on by default.
