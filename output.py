@@ -28,6 +28,16 @@ def make_level_labels(csf_strings):
         labels.append(new_string) 
     return labels       
 
+def make_level_labels_full_length(csf_strings):
+    labels = []
+    num = len(csf_strings)
+    for ii in range(num):
+        new_string = csf_strings[ii]
+        new_string = re.sub("\(.*?\)","",csf_strings[ii])
+        length = len(new_string)
+    return labels  
+
+
 def print_out_kurucz_format(lower_levels,upper_levels,jvalues,wavelengths,avalues,loggf,wavenumbers,elementcode,csfs):
     num_trans = len(wavelengths)
 
@@ -126,6 +136,9 @@ def write_out_kurucz_format(lower_levels,upper_levels,jvalues,wavelengths,avalue
 def write_out_kurucz_fortran_format(lower_levels,upper_levels,jvalues,wavelengths,avalues,loggf,wavenumbers,elementcode,csfs,level_truncate,reject_bad_a_values):
     num_trans = len(wavelengths)
 
+
+    print("INITIATING KURUCZ FORMAT BUSINESS")
+
     file_name_string = 'Kurucz_formatted_adf04_element' + str(elementcode)
 
     f = open(file_name_string,'w')
@@ -137,7 +150,7 @@ def write_out_kurucz_fortran_format(lower_levels,upper_levels,jvalues,wavelength
 
     num_trans_to_be_printed = 0
 
-    if num_trans==MAX_LINES:
+    if level_truncate==MAX_LINES:
         print("User requested all lines",num_trans)
     else:
         print("User requested ",level_truncate," lines")
@@ -207,6 +220,87 @@ def write_out_kurucz_fortran_format(lower_levels,upper_levels,jvalues,wavelength
     print("-------------------------")
 
     return 0
+
+def write_out_line_list_my_format_fortran_format(lower_levels,upper_levels,jvalues,wavelengths,avalues,loggf,wavenumbers,elementcode,csfs,level_truncate,reject_bad_a_values):
+    num_trans = len(wavelengths)
+
+
+    print("INITIATING MORE EASY TO UNDERSTAND FORMAT BUSINESS")
+
+    file_name_string = 'lines_formatted_adf04_element' + str(elementcode)
+
+    f = open(file_name_string,'w')
+    labels = make_level_labels(csf_strings=csfs)
+
+    print("Writing out to ",file_name_string)
+    format_string = 'F15.4,E10.3,F6.2,I5,F5.1,1X,A15,F12.3,I5,F5.1,1X,A15,F12.3'    
+    line = ff.FortranRecordWriter(format_string)
+
+    num_trans_to_be_printed = 0
+
+    if level_truncate==MAX_LINES:
+        print("User requested all lines",num_trans)
+    else:
+        print("User requested ",level_truncate," lines")
+
+
+    if level_truncate > num_trans:
+        print("too many lines requested - requesting max number  ",num_trans)
+        num_trans_to_be_printed = num_trans
+    else: 
+        num_trans_to_be_printed = level_truncate
+        print("printing ",num_trans_to_be_printed," lines")
+    print("-------------------------")
+
+    rejected_transitions_wavelength = 0
+    rejected_transitions_a_value = 0
+    suspect_transitions_a_value = 0
+    for iter in range(0,num_trans_to_be_printed):
+        current_wavelength = wavelengths[iter]
+        current_a_value = avalues[iter]
+        lower_index = lower_levels[iter]-1
+        upper_index = upper_levels[iter]-1
+
+        if (current_wavelength >= 1e8):
+            #too large a wavelength breaks the fortran format, and too low an avalue probably doesnt matter anyway.
+            #print("rejecting transition from ",lower_index+1, "to ",upper_index+1," with wavelength ",current_wavelength, " angs and Einstein A value ",current_a_value)
+            rejected_transitions_wavelength += 1
+        elif ((current_a_value < 1e-29) and (reject_bad_a_values == True)):
+            rejected_transitions_a_value += 1
+        else:
+            #but not rejected ... logic could probably be better structured
+            if current_a_value < 1e-29:
+                suspect_transitions_a_value+=1
+
+            array = [current_wavelength,current_a_value,elementcode] 
+            lower_level_info = [lower_index+1,jvalues[lower_index],labels[lower_index],wavenumbers[lower_index]]
+            upper_level_info = [upper_index+1,jvalues[upper_index],labels[upper_index],wavenumbers[upper_index]]
+
+    
+            array.extend(lower_level_info)
+            array.extend(upper_level_info)
+
+            #print(line.write(array))
+            f.write(line.write(array))
+            f.write("\n")
+            #print(wavelengths[iter])
+    print("-------------------------")
+    rejected_transitions = rejected_transitions_a_value + rejected_transitions_wavelength
+    print("output summary: ")
+    print(num_trans_to_be_printed, 'lines requested')
+    print(rejected_transitions," lines rejected")
+    print('       ',rejected_transitions_wavelength,'bad wavelengths rejected')
+    if reject_bad_a_values == True:
+        print('       ',rejected_transitions_a_value,'bad A values rejected')
+    else:
+        print('       ',suspect_transitions_a_value,'bad A values found (not rejected as per user instruction)')
+    print(num_trans_to_be_printed-rejected_transitions, "lines printed")
+    print("output data is in ",file_name_string)
+    print("-------------------------")
+
+    return 0
+
+
 
 def write_out_data_in_an_actually_coherent_format(lower_levels,upper_levels,jvalues,wavelengths,avalues,loggf,wavenumbers,elementcode,csfs):
     num_trans = len(wavelengths)
