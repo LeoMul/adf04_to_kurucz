@@ -100,16 +100,28 @@ def get_level_and_term_data(path,num_levels):
 def read_in_initial(path):
     f = open(path,'r')
     first_line = f.readline()
-    first_line_data = first_line.split()
-    atomic_symbol = first_line_data[0]
-    effective_charge = first_line_data[1]
-    atomic_number = first_line_data[2]
 
-    effective_charge_int = int(effective_charge[1])
+    print(first_line)
+
+
+    new_stuff = first_line[0:5].replace("+"," ").split()
+
+    other_stuff = first_line[5:].split()
+    print(other_stuff)
+
+    atomic_symbol = new_stuff[0]
+
+    effective_charge = new_stuff[1]
+    atomic_number = other_stuff[0]
+
+    effective_charge_int = int(effective_charge[0])
 
     #effective_charge_for_element_code = str(effective_charge_int)
     #if effective_charge_int < 10:
     #    effective_charge_for_element_code = '0'+effective_charge_for_element_code
+
+    #will fail for charges higher than 10 with current string manipulation
+
 
     print("Found atomic symbol ",atomic_symbol)
     print("Found atomic number",atomic_number)

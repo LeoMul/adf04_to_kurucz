@@ -152,20 +152,21 @@ def write_out_kurucz_fortran_format(lower_levels,upper_levels,jvalues,wavelength
 
     num_trans_to_be_printed = 0
 
+    #if level_truncate==MAX_LINES:
+    #    print("User requested all lines",num_trans)
+    #else:
+    #    print("User requested ",level_truncate," lines")
+
     if level_truncate==MAX_LINES:
         print("User requested all lines",num_trans)
-    else:
-        print("User requested ",level_truncate," lines")
-
-
-    if level_truncate > num_trans:
+    elif level_truncate > num_trans:
         print("too many lines requested - requesting max number  ",num_trans)
         num_trans_to_be_printed = num_trans
     else: 
         num_trans_to_be_printed = level_truncate
-        print("printing ",num_trans_to_be_printed," lines")
+        print("User requested ",num_trans_to_be_printed," lines")
     print("-------------------------")
-
+    print("printing")
     rejected_transitions_wavelength = 0
     rejected_transitions_a_value = 0
     suspect_transitions_a_value = 0
