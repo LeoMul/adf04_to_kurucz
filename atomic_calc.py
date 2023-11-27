@@ -12,7 +12,11 @@ def calculate_wavelengths_and_transition_energies(wavenumbers,upper_levels,lower
         upper_levels_index = upper_levels[jj]-1
         lower_levels_index = lower_levels[jj]-1
         transition_energies[jj] = wavenumbers[upper_levels_index] - wavenumbers[lower_levels_index]
+        if transition_energies[jj] == 0.0:
+            print("warning incoming",upper_levels_index,lower_levels_index)
     wavelengths = np.power(transition_energies,-1)*10_000_000
+
+
 
     return wavelengths,transition_energies
 
