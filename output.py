@@ -159,6 +159,7 @@ def write_out_kurucz_fortran_format(lower_levels,upper_levels,jvalues,wavelength
 
     if level_truncate==MAX_LINES:
         print("User requested all lines",num_trans)
+        num_trans_to_be_printed = num_trans
     elif level_truncate > num_trans:
         print("too many lines requested - requesting max number  ",num_trans)
         num_trans_to_be_printed = num_trans
