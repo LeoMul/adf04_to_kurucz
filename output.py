@@ -135,7 +135,7 @@ def write_out_kurucz_format(lower_levels,upper_levels,jvalues,wavelengths,avalue
     f.close()
     return 0
 
-def write_out_kurucz_fortran_format(lower_levels,upper_levels,jvalues,wavelengths,avalues,loggf,wavenumbers,elementcode,csfs,level_truncate,reject_bad_a_values):
+def write_out_kurucz_fortran_format(lower_levels,upper_levels,jvalues,wavelengths,avalues,loggf,wavenumbers,elementcode,csfs,level_truncate,reject_bad_a_values,sort_by_wave_lengths):
     num_trans = len(wavelengths)
 
 
@@ -171,6 +171,16 @@ def write_out_kurucz_fortran_format(lower_levels,upper_levels,jvalues,wavelength
     rejected_transitions_wavelength = 0
     rejected_transitions_a_value = 0
     suspect_transitions_a_value = 0
+    if sort_by_wave_lengths:
+        sorted_indices = wavelengths.argsort()
+        wavelengths = wavelengths[sorted_indices]
+        avalues = avalues[sorted_indices]
+        lower_levels=lower_levels[sorted_indices]
+        upper_levels=upper_levels[sorted_indices]
+
+
+
+
     for iter in range(0,num_trans_to_be_printed):
         current_wavelength = wavelengths[iter]
         current_a_value = avalues[iter]
@@ -226,7 +236,7 @@ def write_out_kurucz_fortran_format(lower_levels,upper_levels,jvalues,wavelength
 
     return 0
 
-def write_out_line_list_my_format_fortran_format(lower_levels,upper_levels,jvalues,wavelengths,avalues,loggf,wavenumbers,elementcode,csfs,level_truncate,reject_bad_a_values):
+def write_out_line_list_my_format_fortran_format(lower_levels,upper_levels,jvalues,wavelengths,avalues,loggf,wavenumbers,elementcode,csfs,level_truncate,reject_bad_a_values,sort_by_wave_lengths):
     num_trans = len(wavelengths)
 
 
@@ -260,6 +270,14 @@ def write_out_line_list_my_format_fortran_format(lower_levels,upper_levels,jvalu
     rejected_transitions_wavelength = 0
     rejected_transitions_a_value = 0
     suspect_transitions_a_value = 0
+
+    if sort_by_wave_lengths:
+        sorted_indices = wavelengths.argsort()
+        wavelengths = wavelengths[sorted_indices]
+        avalues = avalues[sorted_indices]
+        lower_levels=lower_levels[sorted_indices]
+        upper_levels=upper_levels[sorted_indices]
+
     for iter in range(0,num_trans_to_be_printed):
         current_wavelength = wavelengths[iter]
         current_a_value = avalues[iter]

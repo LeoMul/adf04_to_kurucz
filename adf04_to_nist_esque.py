@@ -12,6 +12,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-f', '--file',  help='Specify path of input file')
 parser.add_argument('-r','--reject_bad_a_values',  help='Reject bad A values? i.e 1e-30 in adf04 file (off by default)',action="store_true")
 parser.add_argument('-n', '--num_transition',  help='Requested number of lines (all lines by default)',type=int)
+parser.add_argument('-w','--sort_by_wavelength',  help='Sort output by wavelengths? Otherwise (default) level sorted.)',action="store_true")
 
 args = parser.parse_args()
 
@@ -29,7 +30,9 @@ else:
     else:
         num_requested_lines = MAX_LINES
         print("requesting all lines")
-
+    sort_by_wavelength_bool = False 
+    if args.sort_by_wavelength:
+        sort_by_wavelength_bool = True 
 
     reject_bad_a_values = False 
     if args.reject_bad_a_values:
@@ -67,7 +70,7 @@ def main():
     wavelengths,transition_energies = atomic_calc.calculate_wavelengths_and_transition_energies(energy_levels_cm_minus_one,upper_levels,lower_levels)
 
     log_gf,f_values = atomic_calc.calculate_oscillator_strengths(a_values_float,wavelengths,jvalues,upper_levels,lower_levels)
-    output.write_out_line_list_my_format_fortran_format(lower_levels,upper_levels,jvalues,wavelengths,a_values_float,log_gf,energy_levels_cm_minus_one,elementcode,csfs_strings,num_requested_lines,reject_bad_a_values)
+    output.write_out_line_list_my_format_fortran_format(lower_levels,upper_levels,jvalues,wavelengths,a_values_float,log_gf,energy_levels_cm_minus_one,elementcode,csfs_strings,num_requested_lines,reject_bad_a_values,sort_by_wavelength_bool)
     #output.write_out_data_in_an_actually_coherent_format(lower_levels,upper_levels,jvalues,wavelengths,a_values_float,log_gf,energy_levels_cm_minus_one,elementcode,csfs_strings)
 
     return 0 
