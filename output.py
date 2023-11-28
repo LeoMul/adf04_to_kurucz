@@ -277,7 +277,8 @@ def write_out_line_list_my_format_fortran_format(lower_levels,upper_levels,jvalu
         avalues = avalues[sorted_indices]
         lower_levels=lower_levels[sorted_indices]
         upper_levels=upper_levels[sorted_indices]
-
+        file_name_string = file_name_string + "wavelengthsorted"
+    file_name_string = file_name_string + ".dat"
     for iter in range(0,num_trans_to_be_printed):
         current_wavelength = wavelengths[iter]
         current_a_value = avalues[iter]
