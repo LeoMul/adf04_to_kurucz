@@ -12,7 +12,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-f', '--file',  help='Specify path of input file')
 parser.add_argument('-r','--reject_bad_a_values',  help='Reject bad A values? i.e 1e-30 in adf04 file (off by default)',action="store_true")
 parser.add_argument('-n', '--num_transition',  help='Requested number of lines (all lines by default)',type=int)
-
+parser.add_argument('-w','--sort_by_wavelength',  help='Sort output by wavelengths? Otherwise (default) level sorted.)',action="store_true")
 args = parser.parse_args()
 
 #if args.help:
@@ -30,6 +30,9 @@ else:
         num_requested_lines = MAX_LINES
         print("requesting all lines")
 
+    sort_by_wavelength_bool = False 
+    if args.sort_by_wavelength:
+        sort_by_wavelength_bool = True 
 
     reject_bad_a_values = False 
     if args.reject_bad_a_values:

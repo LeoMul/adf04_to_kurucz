@@ -181,7 +181,7 @@ def write_out_kurucz_fortran_format(lower_levels,upper_levels,jvalues,wavelength
             #too large a wavelength breaks the fortran format, and too low an avalue probably doesnt matter anyway.
             #print("rejecting transition from ",lower_index+1, "to ",upper_index+1," with wavelength ",current_wavelength, " angs and Einstein A value ",current_a_value)
             rejected_transitions_wavelength += 1
-            print("ignoring",upper_index+1,lower_index+1)
+            print("ignoring",upper_index+1,lower_index+1,'wavelength = ',current_wavelength)
         elif ((current_a_value < 1e-29) and (reject_bad_a_values == True)):
             rejected_transitions_a_value += 1
         else:
@@ -238,7 +238,7 @@ def write_out_line_list_my_format_fortran_format(lower_levels,upper_levels,jvalu
     labels = csfs
 
     print("Writing out to ",file_name_string)
-    format_string = 'F15.4,ES10.3,ES10.3,ES10.3,F6.2,I5,F5.1,1X,A15,F12.3,I5,F5.1,1X,A15,F12.3'    
+    format_string = 'F15.4,ES10.3,ES10.3,F6.2,I5,F5.1,1X,A15,F12.3,I5,F5.1,1X,A15,F12.3'    
     line = ff.FortranRecordWriter(format_string)
 
     num_trans_to_be_printed = 0
@@ -270,7 +270,7 @@ def write_out_line_list_my_format_fortran_format(lower_levels,upper_levels,jvalu
             #too large a wavelength breaks the fortran format, and too low an avalue probably doesnt matter anyway.
             #print("rejecting transition from ",lower_index+1, "to ",upper_index+1," with wavelength ",current_wavelength, " angs and Einstein A value ",current_a_value)
             rejected_transitions_wavelength += 1
-            print("ignoring",upper_index+1,lower_index+1)
+            print("ignoring",upper_index+1,lower_index+1,'wavelength = ',current_wavelength)
         elif ((current_a_value < 1e-29) and (reject_bad_a_values == True)):
             rejected_transitions_a_value += 1
         else:
@@ -280,7 +280,8 @@ def write_out_line_list_my_format_fortran_format(lower_levels,upper_levels,jvalu
 
             stat_weight = 2.0 * jvalues[lower_index] + 1
             other_weight = 2.0 * jvalues[upper_index] + 1
-            array = [current_wavelength,current_a_value,stat_weight*current_a_value,other_weight*current_a_value,elementcode] 
+            #print("statistical weight",stat_weight)
+            array = [current_wavelength,current_a_value,stat_weight*current_a_value,elementcode] 
             lower_level_info = [lower_index+1,jvalues[lower_index],labels[lower_index],wavenumbers[lower_index]]
             upper_level_info = [upper_index+1,jvalues[upper_index],labels[upper_index],wavenumbers[upper_index]]
 
