@@ -7,13 +7,9 @@ and retains (most of) the level labels in the adf04 file.
 
 since CARSUS expects the wavelengths in fortran F11.4 format, it automatically rejects any wavelength that cannot be stored in this format.
 
-MAYBE IGNORE: the head of the adf04 file is ideally something like "Y +1        39         2         98590.(2F)" 
-maybe ignore: The absolute number of spaces between stuff doesn't matter (i dont think) as long as there is at least one space 
-
-ignore the above - it probably works for all adf04 formats now.
-
 the additional optional arguments:
-     -r (no argument, just a flag) tells the code to either accept or reject bad A values from the adf04 file (i.e the default value of 1e-30). 0 is on by default.
+     -r (no argument, just a flag) tells the code to reject bad A values from the adf04 file (i.e the default value of 1e-30). 
+          this is off by default, thereby outputting those transitions. it results in a log(gf) of -30 or so - which probably doesnt affect the modelling.
      -n 'n' specifies number of lines wanted, by default it prints all (except those rejected on wavelength or a value grounds if specified.)
 
 current dependencies: 
