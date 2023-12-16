@@ -143,7 +143,7 @@ def write_out_kurucz_fortran_format(lower_levels,upper_levels,jvalues,wavelength
 
     file_name_string = 'Kurucz_formatted_adf04_element' + str(elementcode)
 
-    f = open(file_name_string,'w')
+    
     labels = make_level_labels(csf_strings=csfs)
 
     print("Writing out to ",file_name_string)
@@ -175,12 +175,13 @@ def write_out_kurucz_fortran_format(lower_levels,upper_levels,jvalues,wavelength
         sorted_indices = wavelengths.argsort()
         wavelengths = wavelengths[sorted_indices]
         avalues = avalues[sorted_indices]
+        loggf = loggf[sorted_indices]
         lower_levels=lower_levels[sorted_indices]
         upper_levels=upper_levels[sorted_indices]
 
 
 
-
+    f = open(file_name_string,'w')
     for iter in range(0,num_trans_to_be_printed):
         current_wavelength = wavelengths[iter]
         current_a_value = avalues[iter]
@@ -244,7 +245,7 @@ def write_out_line_list_my_format_fortran_format(lower_levels,upper_levels,jvalu
 
     file_name_string = 'lines_formatted_adf04_element' + str(elementcode)
 
-    f = open(file_name_string,'w')
+    
     labels = csfs
 
     print("Writing out to ",file_name_string)
@@ -279,6 +280,7 @@ def write_out_line_list_my_format_fortran_format(lower_levels,upper_levels,jvalu
         upper_levels=upper_levels[sorted_indices]
         file_name_string = file_name_string + "wavelengthsorted"
     file_name_string = file_name_string + ".dat"
+    f = open(file_name_string,'w')
     for iter in range(0,num_trans_to_be_printed):
         current_wavelength = wavelengths[iter]
         current_a_value = avalues[iter]

@@ -70,7 +70,7 @@ def main():
     wavelengths,transition_energies = atomic_calc.calculate_wavelengths_and_transition_energies(energy_levels_cm_minus_one,upper_levels,lower_levels)
 
     log_gf,f_values = atomic_calc.calculate_oscillator_strengths(a_values_float,wavelengths,jvalues,upper_levels,lower_levels)
-    output.write_out_kurucz_fortran_format(lower_levels,upper_levels,jvalues,wavelengths,a_values_float,log_gf,energy_levels_cm_minus_one,elementcode,csfs_strings,num_requested_lines,reject_bad_a_values)
+    output.write_out_kurucz_fortran_format(lower_levels,upper_levels,jvalues,wavelengths,a_values_float,log_gf,energy_levels_cm_minus_one,elementcode,csfs_strings,num_requested_lines,reject_bad_a_values,sort_by_wavelength_bool)
     #output.write_out_data_in_an_actually_coherent_format(lower_levels,upper_levels,jvalues,wavelengths,a_values_float,log_gf,energy_levels_cm_minus_one,elementcode,csfs_strings)
 
     return 0 
