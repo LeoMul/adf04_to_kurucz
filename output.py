@@ -178,7 +178,7 @@ def write_out_kurucz_fortran_format(lower_levels,upper_levels,jvalues,wavelength
         loggf = loggf[sorted_indices]
         lower_levels=lower_levels[sorted_indices]
         upper_levels=upper_levels[sorted_indices]
-
+        file_name_string = file_name_string + "wavelengthsorted"
 
 
     f = open(file_name_string,'w')
