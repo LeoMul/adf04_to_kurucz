@@ -245,6 +245,8 @@ def write_out_line_list_my_format_fortran_format(lower_levels,upper_levels,jvalu
 
     file_name_string = 'lines_formatted_adf04_element' + str(elementcode)
 
+    wavenumbers/= 109677.57 
+    wavenumbers*= 13.605693122994
     
     labels = csfs
 
@@ -260,7 +262,7 @@ def write_out_line_list_my_format_fortran_format(lower_levels,upper_levels,jvalu
         print("User requested ",level_truncate," lines")
 
 
-    if level_truncate > num_trans:
+    if (level_truncate > num_trans):
         print("too many lines requested - requesting max number  ",num_trans)
         num_trans_to_be_printed = num_trans
     else: 
