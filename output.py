@@ -1,6 +1,8 @@
 import fortranformat as ff
 import re
 import numpy as np
+from PyAstronomy import pyasl
+
 MAX_LINES = (2**63-1)
 
 def write_out_stuff_for_tests(lower_levels,upper_levels,jvalues,wavelengths,avalues,loggf,num_to_be_printed):
@@ -135,7 +137,7 @@ def write_out_kurucz_format(lower_levels,upper_levels,jvalues,wavelengths,avalue
     f.close()
     return 0
 
-def write_out_kurucz_fortran_format(lower_levels,upper_levels,jvalues,wavelengths,avalues,loggf,wavenumbers,elementcode,csfs,level_truncate,reject_bad_a_values,sort_by_wave_lengths):
+def write_out_kurucz_fortran_format(lower_levels,upper_levels,jvalues,wavelengths,avalues,loggf,wavenumbers,elementcode,csfs,level_truncate,reject_bad_a_values,sort_by_wave_lengths,convert_to_vacuum):
     num_trans = len(wavelengths)
 
 
@@ -181,6 +183,18 @@ def write_out_kurucz_fortran_format(lower_levels,upper_levels,jvalues,wavelength
         file_name_string = file_name_string + "wavelengthsorted"
 
 
+    
+
+    indices_of_wavelengths_larger_200 = np.argwhere(wavelengths>200)
+
+    if convert_to_vacuum:
+        print("converting stuff to vacuum like you asked me to.")
+        print(wavelengths[indices_of_wavelengths_larger_200])
+        for ii in indices_of_wavelengths_larger_200:
+            wavelengths[ii] = 0.1*pyasl.airtovac2(10*wavelengths[ii], mode="edlen53", precision=1e-9, maxiter=30) # default values: precision=1e-12, maxiter=30)
+        file_name_string = file_name_string + "VACUUM"
+    else:
+        print("NOT converting to vacuum")
     f = open(file_name_string,'w')
     for iter in range(0,num_trans_to_be_printed):
         current_wavelength = wavelengths[iter]
