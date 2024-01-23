@@ -137,13 +137,12 @@ def write_out_kurucz_format(lower_levels,upper_levels,jvalues,wavelengths,avalue
     f.close()
     return 0
 
-def write_out_kurucz_fortran_format(lower_levels,upper_levels,jvalues,wavelengths,avalues,loggf,wavenumbers,elementcode,csfs,level_truncate,reject_bad_a_values,sort_by_wave_lengths,convert_to_vacuum):
+def write_out_kurucz_fortran_format(lower_levels,upper_levels,jvalues,wavelengths,avalues,loggf,wavenumbers,elementcode,csfs,level_truncate,reject_bad_a_values,sort_by_wave_lengths,convert_to_vacuum,file_name_string):
     num_trans = len(wavelengths)
 
 
     print("INITIATING KURUCZ FORMAT BUSINESS")
 
-    file_name_string = 'Kurucz_formatted_adf04_element' + str(elementcode)
 
     
     labels = make_level_labels(csf_strings=csfs)
