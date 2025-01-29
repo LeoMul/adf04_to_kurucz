@@ -1,4 +1,8 @@
 import numpy as np
+
+BOLTZMAN_EV = 8.6173303e-5
+
+
 def get_angular_letter(total_l_string):
     #translates L into the coresponding symbol.
     total_l = int(total_l_string)
@@ -12,9 +16,10 @@ def get_angular_letter(total_l_string):
         return angular_dictionary[total_l]
 
 def convert_a_value_string_to_float(a_value_string):
+    #print(a_value_string)
+
     array = [*a_value_string]
     array.remove('.')
-
     #this converts the hilariously outdated float format in adf04 files into an actual number
 
     #print(array)
@@ -39,6 +44,14 @@ def convert_many_a_values(avalue_string_array):
         a_values[jj] = convert_a_value_string_to_float(a_value_string=avalue_string_array[jj])
     return a_values
 
+def convert_upsilons(upsilon_string_array):
+    shape = np.shape(upsilon_string_array)
+    ups = np.zeros(shape)
+    for ii in range(0,shape[0]):
+        for jj in range(0,shape[1]):
+            ups[ii,jj] = convert_a_value_string_to_float(upsilon_string_array[ii,jj])
+    return ups
+
 def get_transition_data(num_levels,path):
     print("Attempting to find transition data")
     num_transitions = int(num_levels * (num_levels-1)/2)
@@ -58,6 +71,47 @@ def get_transition_data(num_levels,path):
     print("-------------------------")
 
     return a_values_float,upper_levels,lower_levels,num_transitions
+
+def get_all_transition_data_inc_upsilons(num_levels,path):
+    print("Attempting to find transition data")
+    num_transitions = int(num_levels * (num_levels-1)/2)
+    temperatures = np.loadtxt(path,skiprows=num_levels+2,dtype=str,max_rows=1)
+
+    transition_data = np.loadtxt(path,skiprows=num_levels+3,dtype=str,max_rows=num_transitions,usecols=(0,1,2))
+
+    temperatures = convert_many_a_values(temperatures[2:])
+
+    #upsilons = transition_data[:,3:-1]
+
+    upsilons = np.empty([num_transitions,len(temperatures)],dtype=object)
+
+    adf04_file = open(path,'r')
+    adf04_file_read = adf04_file.readlines()
+    skiprows = num_levels + 3 
+    for ii in range(0,num_transitions):
+        current_line = adf04_file_read[ii + skiprows].replace('\n','')[0:-8]
+        current_line = current_line.split()
+        #print(current_line)
+        this_upsilon = current_line[3:]
+        upsilons[ii,:] = np.array(this_upsilon,dtype=str)
+        #print(this_upsilon)
+        #print(upsilons[ii,:])
+    #print(upsilons[1,:])
+    upsilons = convert_upsilons(upsilons)
+    #it is possible i may need to add an expection here if it doesnt find the expected number of transitions
+    print("Expecting ",num_transitions," transitions")
+    upper_levels = transition_data[:,0].astype(int)
+    lower_levels = transition_data[:,1].astype(int)
+    a_values_string_array = transition_data[:,2]
+    print("found ",len(a_values_string_array),' transitions')
+
+
+    num_transitions = len(a_values_string_array)
+    a_values_float = convert_many_a_values(avalue_string_array=a_values_string_array)
+    print("transition data found successfully")    
+    print("-------------------------")
+
+    return a_values_float,upper_levels,lower_levels,temperatures,upsilons,num_transitions
 
 def process_term_strings_and_j_values(term_L_S,term_J,num_levels):
     term_strings = []
@@ -108,7 +162,9 @@ def read_in_initial(path):
 
     other_stuff = first_line[5:].split()
     print(other_stuff)
-
+    extracting_ion_pot =  other_stuff[-1].split('.')
+    ion_pot = float(extracting_ion_pot[0])
+    #print(ion_pot)
     atomic_symbol = new_stuff[0]
 
     effective_charge = new_stuff[1]
@@ -145,5 +201,24 @@ def read_in_initial(path):
      
     print("found ",level_counter," levels")
     f.close()
-    return elementcode,level_counter
+    return elementcode,level_counter,ion_pot
     
+def write_out_levels_get_temps(path,level_counter,new_path):
+    f_new = open(new_path,'w')
+    f_old = open(path,'r')
+
+    f_old_read = f_old.readlines()
+
+    for jj in range(0,level_counter+3):
+        f_new.write(f_old_read[jj])
+
+    temps = f_old_read[level_counter+2].split()[2:]
+
+    temps = convert_many_a_values(temps)
+    #print(temps)    
+    temps = np.array(temps)
+    f_new.close()
+    f_old.close()
+
+    return temps
+

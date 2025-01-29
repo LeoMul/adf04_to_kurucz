@@ -19,13 +19,13 @@ def write_out_stuff_for_tests(lower_levels,upper_levels,jvalues,wavelengths,aval
         upper_index = upper_levels[jj]
         print(upper_index,lower_index,jvalues[upper_index-1],jvalues[lower_index-1],wavelengths[jj],avalues[jj],loggf[jj])
 
-def make_level_labels(csf_strings):
+def make_level_labels(csf_strings,term_strings):
     labels = []
     num = len(csf_strings)
     for ii in range(num):
-        new_string = csf_strings[ii]
-        new_string = re.sub("\(.*?\)","",csf_strings[ii])[0:10]
+        new_string = csf_strings[ii] +'.'+ term_strings[ii]
         length = len(new_string)
+        #new_string = new_string[length-10:length]
         if length < 10:
             new_string = ' ' * (10-length) + new_string 
         labels.append(new_string) 
@@ -88,12 +88,12 @@ def print_out_kurucz_format(lower_levels,upper_levels,jvalues,wavelengths,avalue
         print(string_to_be_written)
     return 0
 
-def write_out_kurucz_format(lower_levels,upper_levels,jvalues,wavelengths,avalues,loggf,wavenumbers,elementcode,csfs):
+def write_out_kurucz_format(lower_levels,upper_levels,jvalues,wavelengths,avalues,loggf,wavenumbers,elementcode,csfs,terms):
     num_trans = len(wavelengths)
     f = open('Kurucz_formatted_adf04_element' + str(elementcode),'w')
     labels = make_level_labels(csf_strings=csfs)
 
-    make_level_labels(csf_strings=csfs)
+    make_level_labels(csf_strings=csfs,term_strings=terms)
     for jj in range(0,num_trans):
 
         lower_level_index = lower_levels[jj]
@@ -137,7 +137,7 @@ def write_out_kurucz_format(lower_levels,upper_levels,jvalues,wavelengths,avalue
     f.close()
     return 0
 
-def write_out_kurucz_fortran_format(lower_levels,upper_levels,jvalues,wavelengths,avalues,loggf,wavenumbers,elementcode,csfs,level_truncate,reject_bad_a_values,sort_by_wave_lengths,convert_to_air,file_name_string):
+def write_out_kurucz_fortran_format(lower_levels,upper_levels,jvalues,wavelengths,avalues,loggf,wavenumbers,elementcode,csfs,terms,level_truncate,reject_bad_a_values,sort_by_wave_lengths,convert_to_air,file_name_string):
     num_trans = len(wavelengths)
 
 
@@ -145,7 +145,7 @@ def write_out_kurucz_fortran_format(lower_levels,upper_levels,jvalues,wavelength
 
 
     
-    labels = make_level_labels(csf_strings=csfs)
+    labels = make_level_labels(csf_strings=csfs,term_strings=terms)
 
     print("Writing out to ",file_name_string)
     format_string = 'F11.4,F7.3,F6.2,F12.3,F5.1,1X,A10,F12.3,F5.1,1X,A10,F6.2,F6.2,F6.2,A4,I2,I2,I3,F6.3,I3,F6.3,I5,I5,A10,I5,I5'
@@ -190,7 +190,7 @@ def write_out_kurucz_fortran_format(lower_levels,upper_levels,jvalues,wavelength
         print("converting stuff to air like you asked me to.")
         print(wavelengths[indices_of_wavelengths_larger_200])
         for ii in indices_of_wavelengths_larger_200:
-            wavelengths[ii] = 0.1*pyasl.vactoair2(10*wavelengths[ii], mode="edlen53", precision=1e-9, maxiter=30) # default values: precision=1e-12, maxiter=30)
+            wavelengths[ii] = 0.1*pyasl.vactoair2(10*wavelengths[ii], mode="edlen53") # default values: precision=1e-12, maxiter=30)
         file_name_string = file_name_string + "air"
     else:
         print("NOT converting to air")
@@ -216,6 +216,11 @@ def write_out_kurucz_fortran_format(lower_levels,upper_levels,jvalues,wavelength
             array = [current_wavelength,loggf[iter],elementcode] 
             lower_level_info = [wavenumbers[lower_index],jvalues[lower_index],labels[lower_index]]
             upper_level_info = [wavenumbers[upper_index],jvalues[upper_index],labels[upper_index]]
+            
+            format_string_backup = 'I5,I5'
+            line_backup = ff.FortranRecordWriter(format_string_backup)
+
+            #print(line_backup.write([lower_index+1,upper_index+1]))
 
             first_zero_array =[0,0,0]
             second_zero_array = [0,0]
@@ -258,13 +263,13 @@ def write_out_line_list_my_format_fortran_format(lower_levels,upper_levels,jvalu
 
     file_name_string = 'lines_formatted_adf04_element' + str(elementcode)
 
-    wavenumbers/= 109677.57 
-    wavenumbers*= 13.605693122994
+    #wavenumbers/= 109677.57 
+    #wavenumbers*= 13.605693122994
     
     labels = csfs
 
     print("Writing out to ",file_name_string)
-    format_string = 'F15.4,ES10.3,ES10.3,F6.2,I5,F5.1,1X,A15,F12.3,I5,F5.1,1X,A15,F12.3'    
+    format_string = 'F15.2,ES10.3,ES10.3,F6.2,I5,F5.1,1X,A15,F12.3,I5,F5.1,1X,A15,F12.3'    
     line = ff.FortranRecordWriter(format_string)
 
     num_trans_to_be_printed = 0

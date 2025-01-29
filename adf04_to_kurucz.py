@@ -67,7 +67,7 @@ def main():
     print("reading file: ",path)
     print("-------------------------")
 
-    elementcode,num_levels = parsing_adf04.read_in_initial(path)
+    elementcode,num_levels,ion_pot = parsing_adf04.read_in_initial(path)
     #this could be made into an object oriented code and probably more pretty, but for the sake of getting results this is good enough imo.
     file_name_string = ''
     if args.output_name:
@@ -76,11 +76,12 @@ def main():
         file_name_string = 'Kurucz_formatted_adf04_element' + str(elementcode)
 
     csfs_strings,term_strings,jvalues,energy_levels_cm_minus_one = parsing_adf04.get_level_and_term_data(path,num_levels)
+    print(term_strings)
     a_values_float,upper_levels,lower_levels,num_transitions = parsing_adf04.get_transition_data(num_levels,path)
     wavelengths,transition_energies = atomic_calc.calculate_wavelengths_and_transition_energies(energy_levels_cm_minus_one,upper_levels,lower_levels)
 
     log_gf,f_values = atomic_calc.calculate_oscillator_strengths(a_values_float,wavelengths,jvalues,upper_levels,lower_levels)
-    output.write_out_kurucz_fortran_format(lower_levels,upper_levels,jvalues,wavelengths,a_values_float,log_gf,energy_levels_cm_minus_one,elementcode,csfs_strings,num_requested_lines,reject_bad_a_values,sort_by_wavelength_bool,convert_to_air,file_name_string)
+    output.write_out_kurucz_fortran_format(lower_levels,upper_levels,jvalues,wavelengths,a_values_float,log_gf,energy_levels_cm_minus_one,elementcode,csfs_strings,term_strings,num_requested_lines,reject_bad_a_values,sort_by_wavelength_bool,convert_to_air,file_name_string)
     #output.write_out_data_in_an_actually_coherent_format(lower_levels,upper_levels,jvalues,wavelengths,a_values_float,log_gf,energy_levels_cm_minus_one,elementcode,csfs_strings)
 
     return 0 
