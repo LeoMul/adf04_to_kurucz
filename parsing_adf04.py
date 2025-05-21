@@ -52,9 +52,13 @@ def convert_upsilons(upsilon_string_array):
             ups[ii,jj] = convert_a_value_string_to_float(upsilon_string_array[ii,jj])
     return ups
 
-def get_transition_data(num_levels,path):
+def get_transition_data(num_levels,path,max_level):
     print("Attempting to find transition data")
     num_transitions = int(num_levels * (num_levels-1)/2)
+    print(num_transitions)
+    if max_level!=-1:
+        num_transitions = int(max_level * (max_level-1)/2)
+        
     transition_data = np.loadtxt(path,skiprows=num_levels+3,dtype=str,usecols=[0,1,2],max_rows=num_transitions)
 
     #it is possible i may need to add an expection here if it doesnt find the expected number of transitions

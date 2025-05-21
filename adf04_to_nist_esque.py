@@ -66,7 +66,7 @@ def main():
     #this could be made into an object oriented code and probably more pretty, but for the sake of getting results this is good enough imo.
 
     csfs_strings,term_strings,jvalues,energy_levels_cm_minus_one = parsing_adf04.get_level_and_term_data(path,num_levels)
-    a_values_float,upper_levels,lower_levels,num_transitions = parsing_adf04.get_transition_data(num_levels,path)
+    a_values_float,upper_levels,lower_levels,num_transitions = parsing_adf04.get_transition_data(num_levels,path,100    )
     wavelengths,transition_energies = atomic_calc.calculate_wavelengths_and_transition_energies(energy_levels_cm_minus_one,upper_levels,lower_levels)
 
     log_gf,f_values = atomic_calc.calculate_oscillator_strengths(a_values_float,wavelengths,jvalues,upper_levels,lower_levels)

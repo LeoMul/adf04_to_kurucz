@@ -15,6 +15,8 @@ parser.add_argument('-n', '--num_transition',  help='Requested number of lines (
 parser.add_argument('-o', '--output_name',  help='output file name, otherwise will make something up based on adf04 name',type=str)
 parser.add_argument('-w','--sort_by_wavelength',  help='Sort output by wavelengths? Otherwise (default) level sorted.)',action="store_true")
 parser.add_argument('-a','--convert_to_air',  help='Convert >200nm to air? Otherwise (default) dont.)',action="store_true")
+parser.add_argument('-m','--max_level',  help='Max level to be output..)',type=int)
+
 args = parser.parse_args()
 
 #if args.help:
@@ -33,6 +35,11 @@ else:
         print("requesting all lines")
 
     sort_by_wavelength_bool = False 
+    
+    max_level = -1 
+    if args.max_level:
+        max_level = int(args.max_level) 
+        
     if args.sort_by_wavelength:
         sort_by_wavelength_bool = True 
     convert_to_air = False
@@ -77,7 +84,7 @@ def main():
 
     csfs_strings,term_strings,jvalues,energy_levels_cm_minus_one = parsing_adf04.get_level_and_term_data(path,num_levels)
     print(term_strings)
-    a_values_float,upper_levels,lower_levels,num_transitions = parsing_adf04.get_transition_data(num_levels,path)
+    a_values_float,upper_levels,lower_levels,num_transitions = parsing_adf04.get_transition_data(num_levels,path,max_level)
     wavelengths,transition_energies = atomic_calc.calculate_wavelengths_and_transition_energies(energy_levels_cm_minus_one,upper_levels,lower_levels)
 
     log_gf,f_values = atomic_calc.calculate_oscillator_strengths(a_values_float,wavelengths,jvalues,upper_levels,lower_levels)

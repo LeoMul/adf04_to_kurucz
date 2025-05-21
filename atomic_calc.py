@@ -11,7 +11,7 @@ def calculate_wavelengths_and_transition_energies(wavenumbers,upper_levels,lower
     for jj in range(num1):
         upper_levels_index = upper_levels[jj]-1
         lower_levels_index = lower_levels[jj]-1
-        transition_energies[jj] = wavenumbers[upper_levels_index] - wavenumbers[lower_levels_index]
+        transition_energies[jj] = np.abs(wavenumbers[upper_levels_index] - wavenumbers[lower_levels_index])
         if transition_energies[jj] == 0.0:
             print("warning incoming",upper_levels_index,lower_levels_index)
     wavelengths = np.power(transition_energies,-1)*10_000_000
@@ -35,8 +35,12 @@ def calculate_oscillator_strengths(a_values_float,wavelengths,total_j_for_each_l
     new_a_values = a_values_float.copy()
 
     for ii in range(0,num):
-        upper_weights[ii] = 2.0 * total_j_for_each_level[upper_levels[ii]-1] + 1.0
-        lower_weights[ii] = 2.0 * total_j_for_each_level[lower_levels[ii]-1] + 1.0
+        #this accounts for the states being swapped around
+        upperInd = max(upper_levels[ii]-1,lower_levels[ii]-1)
+        lowerInd = min(upper_levels[ii]-1,lower_levels[ii]-1)
+
+        upper_weights[ii] = 2.0 * total_j_for_each_level[upperInd] + 1.0
+        lower_weights[ii] = 2.0 * total_j_for_each_level[lowerInd] + 1.0
         if new_a_values[ii] == 0.0:
             new_a_values[ii] = 1.0e-30
             #print('help')
