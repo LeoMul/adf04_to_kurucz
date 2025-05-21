@@ -36,8 +36,8 @@ def calculate_oscillator_strengths(a_values_float,wavelengths,total_j_for_each_l
 
     for ii in range(0,num):
         #this accounts for the states being swapped around
-        upperInd = max(upper_levels[ii]-1,lower_levels[ii]-1)
-        lowerInd = min(upper_levels[ii]-1,lower_levels[ii]-1)
+        upperInd = upper_levels[ii]-1#max(upper_levels[ii]-1,lower_levels[ii]-1)
+        lowerInd = lower_levels[ii]-1#min(upper_levels[ii]-1,lower_levels[ii]-1)
 
         upper_weights[ii] = 2.0 * total_j_for_each_level[upperInd] + 1.0
         lower_weights[ii] = 2.0 * total_j_for_each_level[lowerInd] + 1.0
