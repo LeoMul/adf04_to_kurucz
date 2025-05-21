@@ -114,6 +114,13 @@ def get_all_transition_data_inc_upsilons(num_levels,path):
     print("Expecting ",num_transitions," transitions")
     upper_levels = transition_data[:,0].astype(int)
     lower_levels = transition_data[:,1].astype(int)
+    for ii in range(0,len(upper_levels)):
+        if (upper_levels[ii] < lower_levels [ii]):
+            u = upper_levels[ii]
+            l = lower_levels[ii]
+            upper_levels[ii] = l 
+            lower_levels[ii] = u
+            
     a_values_string_array = transition_data[:,2]
     print("found ",len(a_values_string_array),' transitions')
 
