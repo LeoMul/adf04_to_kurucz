@@ -139,9 +139,16 @@ def process_term_strings_and_j_values(term_L_S,term_J,num_levels):
     for ii in range(0,num_levels):
         current_first_string = term_L_S[ii]
         m = current_first_string[1]
-        total_l = current_first_string[3]
+        try:
+            total_l = current_first_string[3]
+        except:
+            total_l = '0'
+            
         jtot = term_J[ii].strip(')') 
-        jvalues[ii] = float(jtot)
+        try:
+            jvalues[ii] = float(jtot)
+        except:
+            jvalues[ii] = 0.0
         L_string = get_angular_letter(total_l)
         new_term_string = m + L_string + jtot
         term_strings.append(new_term_string)
@@ -149,25 +156,74 @@ def process_term_strings_and_j_values(term_L_S,term_J,num_levels):
     
 def get_level_and_term_data(path,num_levels):
     print("Attempting to find term data")
-    level_data = np.loadtxt(path,skiprows=1,max_rows=num_levels,dtype = str)
     
-    #the adf04 format seems to split these in two, so i parse them seperately.
+    #level_data = np.loadtxt(path,skiprows=1,max_rows=num_levels,dtype = str)
+    ##the adf04 format seems to split these in two, so i parse them seperately.
+    #term_L_S = level_data[:,2]
+    #term_J = level_data[:,3]
+    #csfs_strings = level_data[:,1]
+    #level_numbers = level_data[:,0].astype(int)
+    #energy_levels_cm_minus_one = level_data[:,4].astype(float)
 
-    term_L_S = level_data[:,2]
-    term_J = level_data[:,3]
-    csfs_strings = level_data[:,1]
-    level_numbers = level_data[:,0].astype(int)
+    
+    # big clean up on Tuesday 8th July 2025 
+    
+    term_L_S = np.empty(num_levels,dtype='<U5')
+    term_J = np.empty(num_levels,dtype='<U5')
+    csfs_strings = np.empty(num_levels,dtype='<U35')
+    level_numbers = np.zeros(num_levels,dtype=int)
+    energy_levels_cm_minus_one = np.zeros(num_levels,dtype=float)
+    
+    adf04_file = open(path,'r')
+    adf04_file.readline()
+    
+    import re
+    
+    for ii in range(0,num_levels):
+        string = adf04_file.readline()
+        string_split = string.split()
+        
+        
+        level_num = int(string_split[0])
+        e_cm = float(string_split[-1])
+        config_string = find_between(string,str(level_num),'(').replace(' ','')
+
+        for jj in range(0,len(string)):
+            if string[jj] == '(':
+                break 
+        ls_pos = jj 
+        for jj in range(len(string)-1,0,-1):
+            if string[jj] == ')':
+                break
+        j_pos = jj 
+        
+        #print(string[j_pos-4:j_pos+1])
+        
+        term_J[ii] = string[j_pos-4:j_pos+1]
+        term_L_S[ii] = string[ls_pos:ls_pos+5]
+        level_numbers[ii] = level_num
+        energy_levels_cm_minus_one[ii] = e_cm
+        csfs_strings[ii] = config_string
+        print(term_L_S[ii],string[ls_pos:ls_pos+5])
+    
+
     #needs to be 4 as the adf04 puts 3D4 to 3D 4 - maybe by changing delimiter we can avoid this
     
     term_strings,jvalues = process_term_strings_and_j_values(term_L_S,term_J,num_levels)
 
-    energy_levels_cm_minus_one = level_data[:,4].astype(float)
     print("term data found, probably")
     print("-------------------------")
 
     return csfs_strings,term_strings,jvalues,energy_levels_cm_minus_one
 
-
+def find_between( s, first, last ):
+###https://stackoverflow.com/questions/3368969/find-string-between-two-substrings
+    try:
+        start = s.index( first ) + len( first )
+        end = s.index( last, start )
+        return s[start:end]
+    except ValueError:
+        return ""
 
 
 def read_in_initial(path):
